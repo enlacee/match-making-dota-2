@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  nuxt:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app  # Mapea el código fuente de tu máquina al contenedor
+      - /app/node_modules  # Evita conflictos con node_modules
+    command: npm run dev
+    environment:
+      - NODE_ENV=development
