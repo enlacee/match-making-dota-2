@@ -1,10 +1,15 @@
 <template>
-    <div>
-        <h1>Welcome to the page: index.vue</h1>
-        <AppStart>
-            AppStart Component: This is an auto-imported component
-        </AppStart>
-
-        <Footer></Footer>
+    <div class="min-h-screen bg-white text-black flex flex-col">
+      
+      <AppStart></AppStart>
+        
+      <!-- Footer -->
+      <footer class="bg-black text-white p-4 text-center">
+        <p>&copy; 2023 Herramienta Empresarial. Todos los derechos reservados.</p>
+      </footer>
     </div>
-</template>
+  </template>
+
+<style scoped>
+
+</style>
