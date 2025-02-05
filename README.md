@@ -12,9 +12,10 @@ Reference of the MMR Level
 
 ## start project
 
-    cd app-frontend
-    docker-compose up --build
-
+```bash
+cd app-frontend
+docker-compose up --build
+```
 
 ## Technical Docs
 
@@ -25,7 +26,14 @@ Reference of the MMR Level
 - Git
 - Node 18.x
 
+**project components**
+
+- VueJS
+- tailwindcss
+
+
 ### Make project nuxt v3
 
     npx nuxi@latest init match-making-dota-2
+    npm install tailwindcss @tailwindcss/vite
 
