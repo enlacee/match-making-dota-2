@@ -10,6 +10,11 @@ Reference of the MMR Level
 
 ![Medallas MMR dota 2](./README/medallas-MMR-dota-2.jpg)
 
+## start project
+
+    cd app-frontend
+    docker-compose up --build
+
 
 ## Technical Docs
 

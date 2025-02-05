@@ -1,8 +1,12 @@
 # Usa Node.js 18 como base
-FROM node:18
+FROM node:18.16.0-alpine
 
 # Establece el directorio de trabajo dentro del contenedor
-WORKDIR /app
+WORKDIR /usr/app
+
+# Available to mount the volumen on container
+VOLUME /usr/app
+
 
 # Copia solo package.json y package-lock.json para instalar dependencias
 COPY package.json package-lock.json ./
@@ -17,4 +21,4 @@ COPY . .
 EXPOSE 3000
 
 # Comando por defecto para desarrollo
-CMD ["npm", "run", "dev"]
+# CMD ["npm", "run", "dev"]
