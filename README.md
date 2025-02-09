@@ -36,4 +36,13 @@ docker-compose up --build
 
     npx nuxi@latest init match-making-dota-2
     npm install tailwindcss @tailwindcss/vite
+    npm install flowbite
+
+**fuentes:**
+
+- https://nuxt.com/docs/guide/directory-structure/app
+- https://nuxt.com/docs/getting-started/views
+
+**Tailwind CSS Nuxt - Flowbite**
+- https://flowbite.com/docs/getting-started/nuxt-js/
 
