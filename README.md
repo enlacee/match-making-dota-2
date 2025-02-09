@@ -17,6 +17,20 @@ cd app-frontend
 docker-compose up --build
 ```
 
+**for production**
+
+first create .env file
+
+```
+NUXT_APP_BUILD_ASSETS_DIR=/nuxt/ node .output/server/index.mjs
+```
+
+```bash
+docker exec  -it <ID-CONTAINER> sh
+npm run generate
+# /  (raiz of the project)
+cp -r ./app-frontend/.output/public/* ./.
+```
 ## Technical Docs
 
 ### techs
