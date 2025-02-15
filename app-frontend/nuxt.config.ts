@@ -15,7 +15,7 @@
 export default defineNuxtConfig({
   compatibilityDate: '2024-04-03',
   devtools: { enabled: false },
-  // ssr: false,
+  ssr: false,
   modules: [
       '@nuxtjs/tailwindcss',
       '@nuxt/image',
@@ -31,7 +31,7 @@ export default defineNuxtConfig({
   },
   // css: ["@/assets/css/main.css"],
   app: {
-    // baseURL: '/match-making-dota-2/', // Important for GitHub Pages
+    baseURL: '/match-making-dota-2/', // Important for GitHub Pages
     head: {
       title: 'Dota 2 Matchmaking Tool',
       meta: [
