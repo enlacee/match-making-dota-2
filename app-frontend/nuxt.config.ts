@@ -21,16 +21,19 @@ export default defineNuxtConfig({
       '@nuxt/image',
   ],
   image: {
-    // Options
-    inject: true
+    provider: 'static', // Asegúrate de definirlo explícitamente
   },
+
+  // NUXT_PUBLIC_BASE_URL USEFULL FOR IMAGES
   runtimeConfig: {
     public: {
-      baseURL: process.env.BASE_URL || "http://localhost:3000"
+      baseURL: "http://localhost:3000/match-making-dota-2"
     }
   },
   // css: ["@/assets/css/main.css"],
+  // baseURL: 'https://subdominio.tudominio.com',
   app: {
+    // baseURL: process.env.NODE_ENV === 'production' ? '/match-making-dota-2/' : '/',
     baseURL: '/match-making-dota-2/', // Important for GitHub Pages
     head: {
       title: 'Dota 2 Matchmaking Tool',

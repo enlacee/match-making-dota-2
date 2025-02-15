@@ -15,21 +15,22 @@ Reference of the MMR Level
 ```bash
 cd app-frontend
 docker-compose up --build
+docker exec  -it app-frontend-nuxt-1 sh
 ```
 
 **for production**
 
-first create .env file
+on `.env` file (if dont have you need to create the file)
 
 ```
 NUXT_APP_BUILD_ASSETS_DIR=/nuxt/ node .output/server/index.mjs
+NUXT_PUBLIC_BASE_URL=https://anibalcopitan.com/match-making-dota-2
 ```
 
 ```bash
 docker exec  -it <ID-CONTAINER> sh
 npm run generate
 # /  (raiz of the project)
-# cp -r ./app-frontend/.output/public/* ./.
 # descomentamentar .env
 cp -r ./app-frontend/.output/public/* ./docs/.
 ```

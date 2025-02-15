@@ -66,7 +66,9 @@
                 class="border rounded-lg p-2 cursor-pointer hover:border-red-500"
                 :class="{'border-red-500': newPlayer.idMedalla === medal.id}"
               >
-                <NuxtImg :src="`/images/medals/${medal.id}.jpg`" :alt="medal.name" class="w-12 h-12 mx-auto"/>
+                <!-- <NuxtImg :src="`/images/medals/${medal.id}.jpg`" :alt="medal.name" class="w-12 h-12 mx-auto"/> -->
+                <img :src="`${baseURL}/images/medals/${medal.id}.jpg`" :alt="medal.name" class="w-12 h-12 mx-auto">
+
                 <p class="text-center text-sm mt-2">{{ medal.name }}&nbsp;</p>
               </div>
             </div>
@@ -107,7 +109,8 @@
                 <td class="py-2 px-3">{{ player.mmr }}</td>
                 <td class="py-2 px-3">
                   <div class="flex items-center space-x-2">
-                    <NuxtImg :src="`/images/medals/${player.idMedalla}.jpg`" :alt="player.medalla" class="w-8 h-8"/>
+                    <!-- <NuxtImg :src="`/images/medals/${player.idMedalla}.jpg`" :alt="player.medalla" class="w-8 h-8"/> -->
+                    <img :src="`${baseURL}/images/medals/${player.idMedalla}.jpg`" :alt="player.medalla" class="w-8 h-8">
                     <span class="text-sm">{{ player.medalla }}</span>
                   </div>
                 </td>
@@ -132,6 +135,11 @@ import { usePlayers } from '@/composables/usePlayers'
 import { useMedals } from '@/composables/useMedals'
 const { players, CUSTOM_MODE, deletePlayer, addPlayer } = usePlayers()
 const { idImageAllMedals } = useMedals()
+
+const runtimeConfig = useRuntimeConfig()
+const baseURL = runtimeConfig.public.baseURL;
+
+console.log('runtimeConfig.public.baseURL', baseURL)
 
 const showMedals = ref(false)
 const newPlayer = ref({
