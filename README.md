@@ -29,7 +29,8 @@ NUXT_APP_BUILD_ASSETS_DIR=/nuxt/ node .output/server/index.mjs
 docker exec  -it <ID-CONTAINER> sh
 npm run generate
 # /  (raiz of the project)
-cp -r ./app-frontend/.output/public/* ./.
+# cp -r ./app-frontend/.output/public/* ./.
+# descomentamentar .env
 cp -r ./app-frontend/.output/public/* ./docs/.
 ```
 ## Technical Docs
