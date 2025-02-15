@@ -30,6 +30,7 @@ docker exec  -it <ID-CONTAINER> sh
 npm run generate
 # /  (raiz of the project)
 cp -r ./app-frontend/.output/public/* ./.
+cp -r ./app-frontend/.output/public/* ./docs/.
 ```
 ## Technical Docs
 
