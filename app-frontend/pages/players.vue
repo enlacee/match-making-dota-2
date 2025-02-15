@@ -15,6 +15,7 @@
       <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg mb-8">
         <h2 class="text-xl font-semibold mb-4">Agregar Nuevo Jugador</h2>
         <form class="space-y-4" @submit.prevent="validateForm">
+          <input type="hidden" v-model="newPlayer.custom">
           <div>
             <label class="block text-sm font-medium mb-2">Apodo de Dota 2</label>
             <input 
@@ -32,6 +33,46 @@
               class="w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none text-gray-900 dark:text-white"
               placeholder="Ingresa el MMR">
           </div>
+
+          <div>
+            <!-- <label class="block text-sm font-medium mb-2">Seleccionar Medalla</label> -->
+
+            <!-- Label con icono de flecha que gira al hacer clic -->
+            <label 
+              class="block text-sm font-medium mb-2 cursor-pointer flex items-center justify-between"
+              @click="showMedals = !showMedals"
+            >
+              <!-- Seleccionar Medalla -->
+              <span>
+                {{ showMedals ? '* Seleccionar Medalla (Manual)' : '* Asignación automática por MMR' }}
+              </span>
+              <svg 
+                class="w-5 h-5 transition-transform duration-300"
+                :class="{'rotate-180': showMedals}" 
+                xmlns="http://www.w3.org/2000/svg" 
+                viewBox="0 0 20 20" 
+                fill="currentColor"
+              >
+                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+              </svg>
+            </label>
+
+            <!-- <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2"> -->
+            <div v-if="showMedals" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2 transition-all duration-300">
+              <div 
+                v-for="medal in idImageAllMedals" 
+                :key="medal.id" 
+                @click="newPlayer.idMedalla = medal.id; newPlayer.custom = 1"
+                class="border rounded-lg p-2 cursor-pointer hover:border-red-500"
+                :class="{'border-red-500': newPlayer.idMedalla === medal.id}"
+              >
+                <NuxtImg :src="`/images/medals/${medal.id}.jpg`" :alt="medal.name" class="w-12 h-12 mx-auto"/>
+                <p class="text-center text-sm mt-2">{{ medal.name }}&nbsp;</p>
+              </div>
+            </div>
+          </div>
+
+<!-- {{newPlayer}} -->
 
           <button 
             type="submit"
@@ -56,10 +97,10 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(player, index) in players" 
+              <tr v-for="(player, index) in players /*[...players].reverse()*/" 
                   :key="index"
                   class="border-t border-gray-200 dark:border-gray-700">
-                <td class="py-2 px-3 text-sm">{{ index + 1 }}</td>
+                <td class="py-2 px-3 text-sm">{{ index + 1/*players.length - index*/ }}</td>
                 <td class="py-2 px-3">
                   <span class="font-medium">{{ player.nickname }}</span>
                 </td>
@@ -88,43 +129,40 @@
   
 <script setup>
 import { usePlayers } from '@/composables/usePlayers'
-const { players, deletePlayer, addPlayer } = usePlayers()
+import { useMedals } from '@/composables/useMedals'
+const { players, CUSTOM_MODE, deletePlayer, addPlayer } = usePlayers()
+const { idImageAllMedals } = useMedals()
 
-// const players = ref([])
+const showMedals = ref(false)
 const newPlayer = ref({
   nickname: '',
-  mmr: ''
+  mmr: '',
+  custom: CUSTOM_MODE.AUTO
 })
 
-const nick = ref('');
-const mmr = ref('');
-const errors = ref({ nick: false, mmr: false });
-
 const validateForm = () => {
-    // errors.value.nick = !nick.value;
-    // errors.value.mmr = !Number.isInteger(mmr.value);
-/*
-    if (!errors.value.nick && !errors.value.mmr) {
-        addPlayer({ nick: nick.value, mmr: mmr.value });
 
-        // Limpiar campos después de agregar
-        nick.value = '';
-        mmr.value = '';
-
-        // document.getElementById('closeButton').click()
-        console.log('Jugador agregado');
-    }
-    console.log('validateForm errors', errors);
-
-*/
-
+    console.log('newPlayer.value', newPlayer.value);
     if (newPlayer.value.nickname && Number.isInteger(newPlayer.value.mmr)) {
-      const mmr = parseInt(newPlayer.value.mmr)
-      addPlayer({ nickname: newPlayer.value.nickname, mmr: mmr });
+      addPlayer({ 
+        nickname: newPlayer.value.nickname,
+        mmr: parseInt(newPlayer.value.mmr),
+        idMedalla: newPlayer.value.idMedalla,
+        custom: newPlayer.value.custom
+      });
 
       // clear form
       newPlayer.value.nickname = ''
       newPlayer.value.mmr = ''
+      newPlayer.value.idMedalla = ''
+      newPlayer.value.custom = CUSTOM_MODE.AUTO
     }
 };
+
+watch(showMedals, (newVal) => {
+  // manualSelection.value = newVal
+  if (!newVal === true) {
+    newPlayer.value.custom = CUSTOM_MODE.AUTO; // resetea data por defecto para mantener CONSISTENCIA
+  }
+})
 </script>

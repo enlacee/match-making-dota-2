@@ -4,21 +4,21 @@ import { ref, onMounted, watch } from 'vue'
 
 export const useMedals = () => {
 
-  const imageJpgMedals = [
-    { id: 0},
-    { id: 1},
-    { id: 2},
-    { id: 3},
-    { id: 4},
-    { id: 5},
-    { id: 6},
-    { id: 7},
-    { id: 8},
-    { id: 9},
-    { id: 10},
-    { id: 11},
-    { id: 12},
-    { id: 13}
+  const idImageAllMedals = [
+    { id: 0, name: "?"},
+    { id: 1, name: "Heraldo"},
+    { id: 2, name: "Guardián"},
+    { id: 3, name: "Cruzado"},
+    { id: 4, name: "Arconte"},
+    { id: 5, name: "Leyenda"},
+    { id: 6, name: "Ancéstral"},
+    { id: 7, name: "Divino"},
+    { id: 8, name: "Immortal"},
+    { id: 9, name: " "},
+    { id: 10, name: " "},
+    { id: 11, name: " "},
+    { id: 12, name: " "},
+    { id: 13, name: " "}
   ];
 
   // Lista de medallas por defecto
@@ -62,6 +62,7 @@ export const useMedals = () => {
 
   return {
     medals,
+    idImageAllMedals,
     resetMedals
   }
 }
