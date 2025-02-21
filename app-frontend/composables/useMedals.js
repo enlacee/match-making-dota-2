@@ -5,7 +5,6 @@ import { ref, onMounted, watch } from 'vue'
 export const useMedals = () => {
 
   const idImageAllMedals = [
-    { id: 0, name: "?"},
     { id: 1, name: "Heraldo"},
     { id: 2, name: "Guardián"},
     { id: 3, name: "Cruzado"},
@@ -14,11 +13,11 @@ export const useMedals = () => {
     { id: 6, name: "Ancéstral"},
     { id: 7, name: "Divino"},
     { id: 8, name: "Immortal"},
-    { id: 9, name: " "},
-    { id: 10, name: " "},
-    { id: 11, name: " "},
-    { id: 12, name: " "},
-    { id: 13, name: " "}
+    { id: 9, name: "Immortal"},
+    { id: 10, name: "Immortal"},
+    { id: 11, name: "Immortal"},
+    { id: 12, name: "Immortal"},
+    { id: 13, name: "Immortal"}
   ];
 
   // Lista de medallas por defecto
