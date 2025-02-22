@@ -15,6 +15,7 @@ Reference of the MMR Level
 ```bash
 cd app-frontend
 docker-compose up --build
+docker-compose build --no-cache
 docker exec  -it app-frontend-nuxt-1 sh
 ```
 

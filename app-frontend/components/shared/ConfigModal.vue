@@ -1,10 +1,65 @@
+<script setup>
+
+/**
+ * Script for open modal
+ */
+defineProps({
+  modelValue: {
+    type: Boolean,
+    required: true
+  }
+})
+
+defineEmits(['update:modelValue'])
+
+/**
+ * start fn
+ */
+import { ref, watch } from 'vue'
+import { useMedals } from '~/composables/useMedals'
+
+const { medals, resetMedals, loadMedals, updateMedalMMR } = useMedals()
+
+// Observa cambios en el mmr de cada medalla y guarda solo si cambió
+watch(
+  () => medals.map(medal => ({ ...medal })), // 🔥 Clona para detectar cambios (BUG SINO SE HACE ESTO NO FUNCIONA DETECTAR EL CAMBIO)
+  (newMedals, oldMedals) => {
+    console.log("newMedals,", newMedals , "oldMedals ", oldMedals);
+
+    newMedals.forEach((medal, index) => {
+      if (!oldMedals || medal.mmr !== oldMedals[index]?.mmr) {
+        console.log(`Actualizando MMR de ${medal.name}: ${oldMedals?.[index]?.mmr} → ${medal.mmr}`);
+        updateMedalMMR(index, medal.mmr);
+      } else {
+        console.log(`No se actualiza ${medal.name}, sigue en ${medal.mmr}`);
+      }
+    });
+  },
+  { deep: true }
+);
+
+const resetValues = () => {
+  if (confirm("¿Estás seguro de resetear los valores?")) {
+    resetMedals(); // Llama la función que resetea en el store
+    loadMedals(); // reload data from localstorage and set the (this.medals)
+
+    // console.log('medals', medals)
+    // console.log('useMedals().medals', useMedals().medals);
+    Object.assign(medals, useMedals().medals); // 🔥 Forzar reactividad
+
+    location.reload(); // 🔄 Recarga la página para reflejar los cambios
+  }
+};
+
+</script>
+
 <template>
   <div v-if="modelValue" 
        class="fixed inset-0 bg-gray-900 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50"
        @click="$emit('update:modelValue', false)">
     <div class="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full mx-4" 
          @click.stop>
-      <div class="p-6">
+      <div class="p-6 max-h-[80vh] overflow-y-auto">
         <div class="flex justify-between items-center mb-4">
           <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
             Configuración
@@ -31,12 +86,14 @@
             <table class="w-full border border-gray-200 text-sm">
               <thead>
                 <tr class="bg-gray-800 text-white">
+                  <th class="px-2">#</th>
                   <th class="px-2">Nombre</th>
                   <th class="px-2">Condición MMR</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="(medal, index) in medals" :key="index" class="border-b text-center">
+                  <td class="px-2">{{ medal.id }}</td>
                   <td class="px-2">{{ medal.name }}</td>
                   <td class="px-2">
                     <code class="text-xs">MMR >= </code> 
@@ -44,8 +101,6 @@
                       type="number" 
                       v-model="medal.mmr" 
                       class="w-20 p-1 border rounded text-center bg-white dark:bg-gray-700"
-                      @focus="focusedRow = index"
-                      @blur="onBlur"
                     />
                   </td>
                 </tr>
@@ -54,7 +109,7 @@
 
             <div class="text-center p-4">
                 <button 
-                  @click="resetMedals"
+                  @click="resetValues"
                   class="px-4 py-2 bg-red-600 text-white rounded text-sm"
                 >
                   Resetear Valores por Defecto
@@ -77,32 +132,3 @@
     </div>
   </div>
 </template>
-
-<script setup>
-defineProps({
-  modelValue: {
-    type: Boolean,
-    required: true
-  }
-})
-
-defineEmits(['update:modelValue'])
-
-// logic code
-import { ref } from 'vue'
-import { useMedals } from '~/composables/useMedals'
-
-// LOGICA
-const { medals, resetMedals } = useMedals()
-const focusedRow = ref(null)
-
-// const saveRow = () => {
-//   focusedRow.value = null
-// }
-
-const onBlur = () => {
-  setTimeout(() => {
-    focusedRow.value = null
-  }, 200)
-}
-</script>

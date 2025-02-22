@@ -19,6 +19,7 @@ export default defineNuxtConfig({
   modules: [
       '@nuxtjs/tailwindcss',
       '@nuxt/image',
+      "@pinia/nuxt"
   ],
   image: {
     provider: 'static', // Asegúrate de definirlo explícitamente

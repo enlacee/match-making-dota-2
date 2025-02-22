@@ -2,7 +2,6 @@ import { ref, onMounted, watch } from 'vue'
 import { useMedals } from '@/composables/useMedals'
 
 const { medals } = useMedals(); 
-
 const players = ref([]); 
 
 export const usePlayers = () => {
@@ -28,50 +27,49 @@ export const usePlayers = () => {
   // Cargar jugadores desde LocalStorage al iniciar
   onMounted(() => {
     
-    const storedPlayers = localStorage.getItem('players');
-    players.value = storedPlayers ? JSON.parse(storedPlayers) : [...defaultPlayers.value];
-
-    // Asignar medallas a los jugadores
-    if (medals.value.length > 0) { // Verifica que las medallas estén cargadas
-      players.value.forEach(player => {
-
-        if (player.custom === CUSTOM_MODE.AUTO) {
-          let objMedal = getMedalByMMR(parseInt(player.mmr));
-          player.idMedalla = objMedal.id;
-          player.medalla = objMedal.name;
-        }
-
-
-      });
-      console.log("== se encontraron medallas");
-    } else {
-      console.log("== no se encontraron medallas");
+    if (process.client) {
+      const storedPlayers = localStorage.getItem('players');
+      players.value = storedPlayers ? JSON.parse(storedPlayers) : [...defaultPlayers.value];
     }
-    
+  
+    if (medals.value.length > 0) {
+      assignMedalsToPlayers();
+    }
   });
 
   // Guardar automáticamente en LocalStorage cuando cambian los jugadores
+  let saveTimeout;
   watch(players, () => {
-    localStorage.setItem('players', JSON.stringify(players.value))
-    console.log("guardo en localstorage!")
-  }, { deep: true })
+    clearTimeout(saveTimeout);
+    saveTimeout = setTimeout(() => {
+      localStorage.setItem('players', JSON.stringify(players.value));
+      console.log("Datos guardados en localStorage.");
+    }, 500); // Espera 500ms antes de guardar
+  }, { deep: true });
+
+  const assignMedalsToPlayers = () => {
+    players.value.forEach(player => {
+      if (player.custom === CUSTOM_MODE.AUTO) {
+        let objMedal = getMedalByMMR(parseInt(player.mmr));
+        player.idMedalla = objMedal.id;
+        player.medalla = objMedal.name;
+      }
+    });
+    console.log("== Medallas asignadas correctamente.");
+  };
 
   // Agregar un nuevo jugador
   const addPlayer = (player) => {
-
-    player.id = Date.now() // Asignar un ID único
-
+    player.id = Date.now();
+  
     if (player.custom === CUSTOM_MODE.AUTO) {
       let objMedal = getMedalByMMR(parseInt(player.mmr));
       player.medalla = objMedal.name;
       player.idMedalla = objMedal.id;
-    } else if (player.custom === CUSTOM_MODE.MANUAL) {
-
     }
-    
-    console.log('player to add to players', player);
-    players.value.push(player)
-  }
+  
+    players.value = [...players.value, player]; // Crear una nueva referencia
+  };
 
   const deletePlayer = (index) => {
     players.value.splice(index, 1);
