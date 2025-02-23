@@ -31,8 +31,9 @@ export const usePlayers = () => {
       const storedPlayers = localStorage.getItem('players');
       players.value = storedPlayers ? JSON.parse(storedPlayers) : [...defaultPlayers.value];
     }
+    console.log('medals in usePLAYER', medals)
   
-    if (medals.value.length > 0) {
+    if (medals.length > 0) {
       assignMedalsToPlayers();
     }
   });
@@ -81,7 +82,7 @@ export const usePlayers = () => {
    * @returns string
    */
   const getMedalByMMR = (mmr) => {
-    const medallas = medals.value;
+    const medallas = medals;
 
     // Recorremos desde el último hasta el primero (más rápido)
     for (let i = medallas.length - 1; i >= 0; i--) {

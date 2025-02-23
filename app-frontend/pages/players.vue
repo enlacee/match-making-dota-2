@@ -1,3 +1,47 @@
+<script setup>
+import { usePlayers } from '@/composables/usePlayers'
+import { useMedals } from '@/composables/useMedals'
+const { players, CUSTOM_MODE, deletePlayer, addPlayer } = usePlayers()
+const { idImageAllMedals } = useMedals()
+
+const runtimeConfig = useRuntimeConfig()
+const baseURL = runtimeConfig.public.baseURL;
+
+console.log('runtimeConfig.public.baseURL', baseURL)
+
+const showMedals = ref(false)
+const newPlayer = ref({
+  nickname: '',
+  mmr: '',
+  custom: CUSTOM_MODE.AUTO
+})
+
+const validateForm = () => {
+
+    console.log('newPlayer.value', newPlayer.value);
+    if (newPlayer.value.nickname && Number.isInteger(newPlayer.value.mmr)) {
+      addPlayer({ 
+        nickname: newPlayer.value.nickname,
+        mmr: parseInt(newPlayer.value.mmr),
+        idMedalla: newPlayer.value.idMedalla,
+        custom: newPlayer.value.custom
+      });
+
+      // clear form
+      newPlayer.value.nickname = ''
+      newPlayer.value.mmr = ''
+      newPlayer.value.idMedalla = ''
+      newPlayer.value.custom = CUSTOM_MODE.AUTO
+    }
+};
+
+watch(showMedals, (newVal) => {
+  // manualSelection.value = newVal
+  if (!newVal === true) {
+    newPlayer.value.custom = CUSTOM_MODE.AUTO; // resetea data por defecto para mantener CONSISTENCIA
+  }
+})
+</script>
 <template>
   <div class="py-8">
     <div class="max-w-3xl mx-auto">
@@ -67,7 +111,7 @@
                 :class="{'border-red-500': newPlayer.idMedalla === medal.id}"
               >
                 <!-- <NuxtImg :src="`/images/medals/${medal.id}.jpg`" :alt="medal.name" class="w-12 h-12 mx-auto"/> -->
-                <img :src="`${baseURL}/images/medals/${medal.id}.jpg`" :alt="medal.name" class="w-12 h-12 mx-auto">
+                <img :src="`${baseURL}/images/custom-medals/${medal.id}.webp`" :alt="medal.name" class="w-25 h-25 mx-auto">
 
                 <p class="text-center text-sm mt-2">{{ medal.name }}&nbsp;</p>
               </div>
@@ -110,7 +154,7 @@
                 <td class="py-2 px-3">
                   <div class="flex items-center space-x-2">
                     <!-- <NuxtImg :src="`/images/medals/${player.idMedalla}.jpg`" :alt="player.medalla" class="w-8 h-8"/> -->
-                    <img :src="`${baseURL}/images/medals/${player.idMedalla}.jpg`" :alt="player.medalla" class="w-8 h-8">
+                    <img :src="`${baseURL}/images/medals/${player.idMedalla}.webp`" :alt="player.medalla" class="w-8 h-8">
                     <span class="text-sm">{{ player.medalla }}</span>
                   </div>
                 </td>
@@ -129,48 +173,3 @@
     </div>
   </div>
 </template>
-  
-<script setup>
-import { usePlayers } from '@/composables/usePlayers'
-import { useMedals } from '@/composables/useMedals'
-const { players, CUSTOM_MODE, deletePlayer, addPlayer } = usePlayers()
-const { idImageAllMedals } = useMedals()
-
-const runtimeConfig = useRuntimeConfig()
-const baseURL = runtimeConfig.public.baseURL;
-
-console.log('runtimeConfig.public.baseURL', baseURL)
-
-const showMedals = ref(false)
-const newPlayer = ref({
-  nickname: '',
-  mmr: '',
-  custom: CUSTOM_MODE.AUTO
-})
-
-const validateForm = () => {
-
-    console.log('newPlayer.value', newPlayer.value);
-    if (newPlayer.value.nickname && Number.isInteger(newPlayer.value.mmr)) {
-      addPlayer({ 
-        nickname: newPlayer.value.nickname,
-        mmr: parseInt(newPlayer.value.mmr),
-        idMedalla: newPlayer.value.idMedalla,
-        custom: newPlayer.value.custom
-      });
-
-      // clear form
-      newPlayer.value.nickname = ''
-      newPlayer.value.mmr = ''
-      newPlayer.value.idMedalla = ''
-      newPlayer.value.custom = CUSTOM_MODE.AUTO
-    }
-};
-
-watch(showMedals, (newVal) => {
-  // manualSelection.value = newVal
-  if (!newVal === true) {
-    newPlayer.value.custom = CUSTOM_MODE.AUTO; // resetea data por defecto para mantener CONSISTENCIA
-  }
-})
-</script>

@@ -10,6 +10,11 @@ Reference of the MMR Level
 
 ![Medallas MMR dota 2](./README/medallas-MMR-dota-2.jpg)
 
+
+Medallas de rango de temporada Febrero 2025
+
+![medallas de rango](./README/medallas-de-rango-de-temporada-febrero-2025.jpg)
+
 ## start project
 
 ```bash

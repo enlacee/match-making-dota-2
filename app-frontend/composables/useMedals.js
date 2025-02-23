@@ -8,19 +8,11 @@ export const useMedals = () => {
     store.saveMedals(); // Guarda los cambios en localStorage
   };
   const idImageAllMedals = [
-    { id: 1, name: "Heraldo"},
-    { id: 2, name: "Guardián"},
-    { id: 3, name: "Cruzado"},
-    { id: 4, name: "Arconte"},
-    { id: 5, name: "Leyenda"},
-    { id: 6, name: "Ancéstral"},
-    { id: 7, name: "Divino"},
-    { id: 8, name: "Immortal"},
-    { id: 9, name: "Immortal"},
-    { id: 10, name: "Immortal"},
-    { id: 11, name: "Immortal"},
-    { id: 12, name: "Immortal"},
-    { id: 13, name: "Immortal"}
+    { id: 37, name: "Immortal 25,000"},
+    { id: 38, name: "Immortal 5000"},
+    { id: 39, name: "Immortal 100"},
+    { id: 40, name: "Immortal 10"},
+    { id: 41, name: "Immortal 1"},
   ];
 
   return {
