@@ -9,6 +9,10 @@ export const usePlayers = () => {
     AUTO: 0,
     MANUAL: 1
   };
+  const MAX_PLAYERS = 10;
+  const isMaxPlayersReached = computed(() => players.value.length >= MAX_PLAYERS);
+  // const isMaxPlayersReached = computed(() => players.value.length >= MAX_PLAYERS);
+
   let defaultPlayers = ref([
     { id: 1, custom: CUSTOM_MODE.AUTO, nickname: "JuanPerez", mmr: 0 },
     { id: 2, custom: CUSTOM_MODE.AUTO, nickname: "RiaMeda", mmr: 721 },
@@ -73,7 +77,9 @@ export const usePlayers = () => {
   };
 
   const deletePlayer = (index) => {
-    players.value.splice(index, 1);
+    if (confirm("¿Estás seguro de eliminar este jugador?")) {
+      players.value.splice(index, 1);
+    }
   };
 
   /**
@@ -98,6 +104,8 @@ export const usePlayers = () => {
   return {
     players,
     CUSTOM_MODE,
+    isMaxPlayersReached,
+    MAX_PLAYERS,
     addPlayer,
     deletePlayer
   }

@@ -1,3 +1,8 @@
+<script setup>
+  import ConfigModal from '~/components/shared/ConfigModal.vue';
+
+  const showConfigModal = ref(false)
+</script>
 <template>
   <div class="min-h-screen flex items-center justify-center">
     <div class="bg-gray-100 dark:bg-gray-800 p-8 rounded-lg shadow-xl max-w-md w-full">
@@ -31,13 +36,6 @@
     <ConfigModal v-model="showConfigModal" />
   </div>
 </template>
-<script setup>
-  import ConfigModal from '~/components/shared/ConfigModal.vue';
-
-  const showConfigModal = ref(false)
-</script>
-
-
 <!--
 
 <script setup lang="ts">

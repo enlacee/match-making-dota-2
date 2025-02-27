@@ -1,7 +1,11 @@
 <script setup>
+import ImageModal from '~/components/shared/ImageModal.vue';
 import { usePlayers } from '@/composables/usePlayers'
 import { useMedals } from '@/composables/useMedals'
-const { players, CUSTOM_MODE, deletePlayer, addPlayer } = usePlayers()
+
+const showModal = ref(false)
+
+const { players, CUSTOM_MODE, isMaxPlayersReached, MAX_PLAYERS, deletePlayer, addPlayer } = usePlayers()
 const { idImageAllMedals } = useMedals()
 
 const runtimeConfig = useRuntimeConfig()
@@ -65,8 +69,9 @@ watch(showMedals, (newVal) => {
             <input 
               v-model="newPlayer.nickname"
               type="text"
-              class="w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none text-gray-900 dark:text-white"
-              placeholder="Ingresa el apodo">
+              class="w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none text-gray-900 dark:text-white disabled:opacity-50"
+              placeholder="Ingresa el apodo"
+              :disabled="isMaxPlayersReached">
           </div>
           
           <div>
@@ -74,8 +79,9 @@ watch(showMedals, (newVal) => {
             <input 
               v-model="newPlayer.mmr"
               type="number"
-              class="w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none text-gray-900 dark:text-white"
-              placeholder="Ingresa el MMR">
+              class="w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none text-gray-900 dark:text-white disabled:opacity-50"
+              placeholder="Ingresa el MMR"
+              :disabled="isMaxPlayersReached">
           </div>
 
           <div>
@@ -104,16 +110,40 @@ watch(showMedals, (newVal) => {
             <!-- <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2"> -->
             <div v-if="showMedals" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2 transition-all duration-300">
               <div 
-                v-for="medal in idImageAllMedals" 
-                :key="medal.id" 
+                v-for="(medal, index) in idImageAllMedals" 
+                :key="index"
                 @click="newPlayer.idMedalla = medal.id; newPlayer.custom = 1"
                 class="border rounded-lg p-2 cursor-pointer hover:border-red-500"
                 :class="{'border-red-500': newPlayer.idMedalla === medal.id}"
               >
                 <!-- <NuxtImg :src="`/images/medals/${medal.id}.jpg`" :alt="medal.name" class="w-12 h-12 mx-auto"/> -->
                 <img :src="`${baseURL}/images/custom-medals/${medal.id}.webp`" :alt="medal.name" class="w-25 h-25 mx-auto">
-
                 <p class="text-center text-sm mt-2">{{ medal.name }}&nbsp;</p>
+                
+                <div>
+                  <!-- <input 
+                    type="number"
+                    class="w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none text-gray-900 dark:text-white"
+                    placeholder=""
+                    value=""> -->
+
+                  <!-- Input normal (editable) -->
+                  <input 
+                    v-if="index !== idImageAllMedals.length - 1"
+                    min="0" oninput="this.value = Math.abs(this.value)"
+                    type="number"
+                    class="w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none text-gray-900 dark:text-white"
+                    placeholder="">
+                  
+                  <!-- Input solo lectura (último) -->
+                  <input 
+                    v-else
+                    type="number"
+                    class="w-full px-4 py-2 bg-gray-200 dark:bg-gray-800 border border-gray-400 dark:border-gray-700 rounded-lg text-gray-600 dark:text-gray-400 cursor-not-allowed"
+                    :value="1"
+                    readonly>
+                </div>
+
               </div>
             </div>
           </div>
@@ -122,8 +152,18 @@ watch(showMedals, (newVal) => {
 
           <button 
             type="submit"
-            class="w-full py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition">
+            class="w-full py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold transition disabled:opacity-50"
+            :disabled="isMaxPlayersReached">
             Agregar Jugador
+            <span class="bg-white text-red-600 font-bold text-xs px-2 py-1 rounded-lg">{{ players.length }}/{{ MAX_PLAYERS }}</span>
+          </button>
+
+          <button 
+            type="button"
+            class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition mt-4 disabled:opacity-50"
+            :disabled="!isMaxPlayersReached"
+            @click="showModal = true">
+            Generar Imagen
           </button>
         </form>
       </div>
@@ -171,5 +211,8 @@ watch(showMedals, (newVal) => {
         </div>
       </div>
     </div>
+
+    <!-- modal abc -->
+    <ImageModal v-model="showModal"></ImageModal>
   </div>
 </template>
