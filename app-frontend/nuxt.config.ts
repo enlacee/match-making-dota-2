@@ -14,7 +14,7 @@
 
 export default defineNuxtConfig({
   compatibilityDate: '2024-04-03',
-  devtools: { enabled: false },
+  devtools: { enabled: process.env.NODE_ENV !== 'production' },
   ssr: false,
   modules: [
       '@nuxtjs/tailwindcss',
@@ -28,7 +28,8 @@ export default defineNuxtConfig({
   // NUXT_PUBLIC_BASE_URL USEFULL FOR IMAGES
   runtimeConfig: {
     public: {
-      baseURL: "http://localhost:3000/match-making-dota-2"
+      // baseURL: "http://localhost:3000/match-making-dota-2",
+      baseURL: process.env.NUXT_PUBLIC_BASE_URL || "http://localhost:3000/match-making-dota-2"
     }
   },
   // css: ["@/assets/css/main.css"],
