@@ -229,7 +229,7 @@ const selectMedal = (medal, index) => {
       <!-- Players List -->
       <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg">
         <h2 class="text-xl font-semibold mb-4">Lista de Jugadores</h2>
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto scroll-container">
           <table class="min-w-full">
             <thead>
               <tr class="text-left text-sm text-gray-500 dark:text-gray-400">

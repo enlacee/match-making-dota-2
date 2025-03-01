@@ -14,7 +14,8 @@
 
 export default defineNuxtConfig({
   compatibilityDate: '2024-04-03',
-  devtools: { enabled: process.env.NODE_ENV !== 'production' },
+  devtools: { enabled: false },
+  // devtools: { enabled: process.env.NODE_ENV !== 'production' },
   ssr: false,
   modules: [
       '@nuxtjs/tailwindcss',

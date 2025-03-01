@@ -66,7 +66,7 @@ console.log('reactivoooooo....', medals.value)
 
             <table class="w-full border border-gray-200 text-sm">
               <thead>
-                <tr class="bg-gray-800 text-white">
+                <tr class="bg-gray-800 dark:bg-gray-500 text-white">
                   <th class="px-2">#</th>
                   <th class="px-2">Nombre</th>
                   <th class="px-2">Condición MMR</th>

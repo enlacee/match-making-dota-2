@@ -166,7 +166,7 @@ watch(() => props.modelValue, (newVal) => {
     <div v-if="modelValue" 
        class="fixed inset-0 bg-gray-900 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50"
         @click="$emit('update:modelValue', false)">
-        <div class="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl" 
+        <div class="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-x-auto scroll-container" 
         @click.stop>
 
 
@@ -215,7 +215,7 @@ watch(() => props.modelValue, (newVal) => {
 
                         <!-- Diferencia de MMR -->
                         <div v-if="sumB > sumA" class="mt-0">
-                            <p class="flex items-center justify-between text-right py-1">Difference 
+                            <p class="flex items-center justify-between text-right py-1">Diferencia 
                                 <span class="bg-[#1E293B] py-1 px-2 w-32">+{{ Math.abs(sumB - sumA) }} MMR</span>
                             </p>
                         </div>
@@ -237,7 +237,7 @@ watch(() => props.modelValue, (newVal) => {
                         type="button" 
                         class="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg 
                             dark:bg-gray-800 dark:text-white 
-                            shadow-md transition-all duration-300 hover:bg-gray-300 dark:hover:bg-gray-700">
+                            shadow-md transition-all duration-300 hover:bg-gray-300 dark:hover:bg-gray-700 dark:border dark:border-red-500">
                         ❌ Cerrar
                     </button>
                     <!-- <span class="">xxx{{ players.length }}/{{ MAX_PLAYERS }}zzz {{players}}</span> -->

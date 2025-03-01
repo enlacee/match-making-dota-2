@@ -6,7 +6,7 @@
         <div class="absolute top-4 right-4">
           <button 
             @click="toggleTheme" 
-            class="p-2 rounded-lg bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors">
+            class="p-2 rounded-lg bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 dark:border dark:border-red-500 transition-colors">
             <span v-if="isDark" class="text-yellow-500">🌞</span>
             <span v-else class="text-gray-700">🌙</span>
           </button>
