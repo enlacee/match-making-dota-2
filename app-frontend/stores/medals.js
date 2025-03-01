@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 
-const medalsConfig = [
+// Object.freeze(INITIAL_MEDALS) => Hace que INITIAL_MEDALS sea inmutable (no se puede modificar en tiempo de ejecución).
+const INITIAL_MEDALS = Object.freeze([
     { id: 1, name: 'Heraldo 1', mmr: 0 },     // Ejemplo1: Heraldo1 es si MMR es mayor a Zero
     { id: 2, name: 'Heraldo 2', mmr: 154 },   // Ejemplo2: Heraldo2 es si MMR es mayor a 154
     { id: 3, name: 'Heraldo 3', mmr: 308 },
@@ -43,26 +44,36 @@ const medalsConfig = [
     { id: 34, name: 'Divino', mmr: 5220 },
     { id: 35, name: 'Divino', mmr: 5420 },
     { id: 36, name: 'Immortal', mmr: 5620 }
-];
+]);
 
 export const useMedalsStore = defineStore("medals", {
     state: ()=> ({
         // medals: JSON.parse(localStorage.getItem("medals")) || [],
-        medals: JSON.parse(localStorage.getItem("medals")) || medalsConfig,
+        medals: JSON.parse(localStorage.getItem("medals")) || JSON.parse(JSON.stringify(INITIAL_MEDALS)),
     }),
 
     actions: {
         loadMedals() {
-            this.medals = JSON.parse(localStorage.getItem("medals")) || [];
+            this.medals = JSON.parse(localStorage.getItem("medals")) || JSON.parse(JSON.stringify(INITIAL_MEDALS));
         },
         saveMedals() {
             localStorage.setItem("medals", JSON.stringify(this.medals));
         },
         resetMedals() {
-            localStorage.removeItem('medals'); // Elimina cualquier valor anterior
-            // const data = [...medalsConfig]; // Restaurar datos por defecto
-            // localStorage.setItem('medals', JSON.stringify(data)); // Guardar en localStorage
-            console.log("RESET se guardó en localStorage", JSON.parse(localStorage.getItem("medals")));
+            localStorage.removeItem('medals');
+            this.medals = [];
+
+            this.medals = JSON.parse(JSON.stringify(INITIAL_MEDALS));
+            // this.saveMedals(); // Guardar en localStorage
+        },
+        updateMedalMMR(index, newMMR) {
+            // this.medals[index].mmr = parseInt(newMMR);
+            // this.medals = [...this.medals]; // Forzar la reactividad
+            // this.saveMedals();
+            this.$patch(state => {
+                state.medals[index].mmr = parseInt(newMMR);
+            });
+            this.saveMedals();
         }
     },
 });

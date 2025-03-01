@@ -1,3 +1,4 @@
+/*
 export default defineNuxtPlugin(() => {
     if (process.client) {
       const showWarning = () => {
@@ -51,4 +52,4 @@ export default defineNuxtPlugin(() => {
       });
     }
   });
-  
+  */

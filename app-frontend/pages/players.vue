@@ -1,9 +1,12 @@
 <script setup>
-import ImageModal from '~/components/shared/ImageModal.vue';
+
+import { ref, nextTick } from 'vue';
 import { usePlayers } from '@/composables/usePlayers'
 import { useMedals } from '@/composables/useMedals'
+import ImageModal from '~/components/shared/ImageModal.vue';
 
 const showModal = ref(false)
+const loading = ref(false); // Estado de carga
 
 const { players, CUSTOM_MODE, isMaxPlayersReached, MAX_PLAYERS, deletePlayer, addPlayer } = usePlayers()
 const { idImageAllMedals } = useMedals()
@@ -15,26 +18,44 @@ console.log('runtimeConfig.public.baseURL', baseURL)
 
 const showMedals = ref(false)
 const newPlayer = ref({
-  nickname: '',
-  mmr: '',
-  custom: CUSTOM_MODE.AUTO
+  nickname:     '',
+  mmr:          '',
+  medalla:      '', // medalla name title
+  medallaTxt:   '',
+  medallaImg:   '',
+  idMedalla:    0,
+  custom:       CUSTOM_MODE.AUTO
 })
 
-const validateForm = () => {
+/**
+ * Add new player: Agregar Jugador
+ * 
+ * @return void
+ */
+const addNewPlayer = async () => {
 
     console.log('newPlayer.value', newPlayer.value);
     if (newPlayer.value.nickname && Number.isInteger(newPlayer.value.mmr)) {
-      addPlayer({ 
-        nickname: newPlayer.value.nickname,
-        mmr: parseInt(newPlayer.value.mmr),
-        idMedalla: newPlayer.value.idMedalla,
-        custom: newPlayer.value.custom
+      loading.value = true; // Iniciar loading
+
+      await addPlayer({ 
+        nickname:   newPlayer.value.nickname,
+        mmr:        parseInt(newPlayer.value.mmr),
+        idMedalla:  newPlayer.value.idMedalla,
+        medallaTxt: newPlayer.value.medallaTxt,
+        custom:     newPlayer.value.custom
       });
 
-      // clear form
+      loading.value = false; // Finalizar loading
+
+      /**
+       * clear data form
+       */
       newPlayer.value.nickname = ''
       newPlayer.value.mmr = ''
-      newPlayer.value.idMedalla = ''
+      newPlayer.value.idMedalla = 0
+      newPlayer.value.medallaTxt = ''
+      newPlayer.value.medallaImg = ''
       newPlayer.value.custom = CUSTOM_MODE.AUTO
     }
 };
@@ -44,7 +65,22 @@ watch(showMedals, (newVal) => {
   if (!newVal === true) {
     newPlayer.value.custom = CUSTOM_MODE.AUTO; // resetea data por defecto para mantener CONSISTENCIA
   }
-})
+});
+
+const medalInputs = ref([]); // Referencias a los inputs
+
+const selectMedal = (medal, index) => {
+  newPlayer.value.custom = CUSTOM_MODE.MANUAL; // MedalLa manual
+  newPlayer.value.idMedalla = medal.id;
+  newPlayer.value.medallaTxt = index === idImageAllMedals.length - 1 ? 1 : null; // Solo el último input tiene valor 1
+
+  console.log('selectMedal: newPlayer', newPlayer);
+  nextTick(() => {
+    if (medalInputs.value[index]) {
+      medalInputs.value[index].focus(); // Enfoca el input correspondiente
+    }
+  });
+};
 </script>
 <template>
   <div class="py-8">
@@ -62,7 +98,7 @@ watch(showMedals, (newVal) => {
       <!-- Add Player Form -->
       <div class="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg mb-8">
         <h2 class="text-xl font-semibold mb-4">Agregar Nuevo Jugador</h2>
-        <form class="space-y-4" @submit.prevent="validateForm">
+        <form class="space-y-4" @submit.prevent="addNewPlayer">
           <input type="hidden" v-model="newPlayer.custom">
           <div>
             <label class="block text-sm font-medium mb-2">Apodo de Dota 2</label>
@@ -112,12 +148,12 @@ watch(showMedals, (newVal) => {
               <div 
                 v-for="(medal, index) in idImageAllMedals" 
                 :key="index"
-                @click="newPlayer.idMedalla = medal.id; newPlayer.custom = 1"
+                @click="selectMedal(medal, index)"
                 class="border rounded-lg p-2 cursor-pointer hover:border-red-500"
                 :class="{'border-red-500': newPlayer.idMedalla === medal.id}"
               >
                 <!-- <NuxtImg :src="`/images/medals/${medal.id}.jpg`" :alt="medal.name" class="w-12 h-12 mx-auto"/> -->
-                <img :src="`${baseURL}/images/custom-medals/${medal.id}.webp`" :alt="medal.name" class="w-25 h-25 mx-auto">
+                <img :src="`${baseURL}/images/custom-medals/${medal.id}.webp`" :alt="medal.name" class="w-14 h-14 mx-auto">
                 <p class="text-center text-sm mt-2">{{ medal.name }}&nbsp;</p>
                 
                 <div>
@@ -129,19 +165,39 @@ watch(showMedals, (newVal) => {
 
                   <!-- Input normal (editable) -->
                   <input 
+                    ref="medalInputs"
+                    type="number"
+                    min="0" oninput="this.value = Math.abs(this.value)"
+                    :readonly="index === idImageAllMedals.length - 1"
+                    :class="{
+                      'bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white cursor-text text-center': index !== idImageAllMedals.length - 1,
+                      'bg-gray-200 dark:bg-gray-800 border-gray-400 dark:border-gray-700 text-gray-600 dark:text-gray-400 cursor-not-allowed text-center': index === idImageAllMedals.length - 1
+                    }"
+                    class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none"
+                    placeholder=""
+                    v-model="newPlayer.medallaTxt"
+                    v-show="newPlayer.idMedalla === medal.id"
+                  />
+
+                  <!--
+                  <input 
                     v-if="index !== idImageAllMedals.length - 1"
                     min="0" oninput="this.value = Math.abs(this.value)"
                     type="number"
                     class="w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:outline-none text-gray-900 dark:text-white"
-                    placeholder="">
-                  
-                  <!-- Input solo lectura (último) -->
+                    placeholder=""
+                    v-model="newPlayer.medallaTxt"
+                    v-show="newPlayer.idMedalla === medal.id"
+                    >
                   <input 
                     v-else
                     type="number"
                     class="w-full px-4 py-2 bg-gray-200 dark:bg-gray-800 border border-gray-400 dark:border-gray-700 rounded-lg text-gray-600 dark:text-gray-400 cursor-not-allowed"
                     :value="1"
                     readonly>
+                  -->
+
+
                 </div>
 
               </div>
@@ -165,6 +221,8 @@ watch(showMedals, (newVal) => {
             @click="showModal = true">
             Generar Imagen
           </button>
+        
+          <div v-if="loading" class="text-red-500">Generando medalla...</div>
         </form>
       </div>
 
@@ -194,7 +252,7 @@ watch(showMedals, (newVal) => {
                 <td class="py-2 px-3">
                   <div class="flex items-center space-x-2">
                     <!-- <NuxtImg :src="`/images/medals/${player.idMedalla}.jpg`" :alt="player.medalla" class="w-8 h-8"/> -->
-                    <img :src="`${baseURL}/images/medals/${player.idMedalla}.webp`" :alt="player.medalla" class="w-8 h-8">
+                    <img :src="player.medallaImg || `${baseURL}/images/medals/${player.idMedalla}.webp`" :alt="player.medalla" class="w-8 h-8">
                     <span class="text-sm">{{ player.medalla }}</span>
                   </div>
                 </td>
@@ -213,6 +271,6 @@ watch(showMedals, (newVal) => {
     </div>
 
     <!-- modal abc -->
-    <ImageModal v-model="showModal"></ImageModal>
+    <ImageModal v-model="showModal" v-model:players="players"></ImageModal>
   </div>
 </template>

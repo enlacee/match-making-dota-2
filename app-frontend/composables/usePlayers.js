@@ -1,10 +1,19 @@
 import { ref, onMounted, watch } from 'vue'
-import { useMedals } from '@/composables/useMedals'
+import { useMedalsStore } from '@/stores/medals';
+import { storeToRefs } from 'pinia';
 
-const { medals } = useMedals(); 
+const runtimeConfig = useRuntimeConfig()
+const baseURL = runtimeConfig.public.baseURL;
 const players = ref([]); 
 
+/**
+ * start
+ * @returns 
+ */
 export const usePlayers = () => {
+  const store = useMedalsStore();
+  const { medals } = storeToRefs(store); // Ahora medals es reactivo
+
   const CUSTOM_MODE = {
     AUTO: 0,
     MANUAL: 1
@@ -35,10 +44,15 @@ export const usePlayers = () => {
       const storedPlayers = localStorage.getItem('players');
       players.value = storedPlayers ? JSON.parse(storedPlayers) : [...defaultPlayers.value];
     }
-    console.log('medals in usePLAYER', medals)
+    console.log('onMounted: medals in usePLAYER  medals.value', medals.value, medals.length)
+    console.log('onMounted: medals.length: ', medals.value.length)
   
-    if (medals.length > 0) {
+    if (medals.value.length > 0) {
       assignMedalsToPlayers();
+      console.log("paso assignMedalsToPlayers() ")
+    } else {
+      console.log("no paso assignMedalsToPlayers() ")
+      
     }
   });
 
@@ -63,19 +77,35 @@ export const usePlayers = () => {
     console.log("== Medallas asignadas correctamente.");
   };
 
-  // Agregar un nuevo jugador
-  const addPlayer = (player) => {
+  /**
+   * Add Player
+   * 
+   * @param {*} player 
+   */
+  const addPlayer = async (player) => {
     player.id = Date.now();
   
+    /**
+     * Clasificar si es medalla automatica o personalizada
+     */
     if (player.custom === CUSTOM_MODE.AUTO) {
       let objMedal = getMedalByMMR(parseInt(player.mmr));
       player.medalla = objMedal.name;
       player.idMedalla = objMedal.id;
+    } else if (player.custom === CUSTOM_MODE.MANUAL) {
+      player.medalla = ''; // 'Medalla name';
+      // player.medallaImg = generarMedallaConTexto(player); // img hexadecimal
+      player.medallaImg = await generarMedallaConTexto(player); // Genera imagen Base64
     }
   
     players.value = [...players.value, player]; // Crear una nueva referencia
   };
 
+  /**
+   * Delete player
+   * 
+   * @param {*} index 
+   */
   const deletePlayer = (index) => {
     if (confirm("¿Estás seguro de eliminar este jugador?")) {
       players.value.splice(index, 1);
@@ -88,7 +118,7 @@ export const usePlayers = () => {
    * @returns string
    */
   const getMedalByMMR = (mmr) => {
-    const medallas = medals;
+    const medallas = medals.value; // ref PINIA DATA
 
     // Recorremos desde el último hasta el primero (más rápido)
     for (let i = medallas.length - 1; i >= 0; i--) {
@@ -100,6 +130,63 @@ export const usePlayers = () => {
     // return "Sin rango"; // Por si el mmr es negativo o inválido
     return { id: 99, name: "Sin rango" };
   };
+
+  /**
+   * 
+   * @param {*} player 
+   * @returns String img
+   */
+  const generarMedallaConTexto = async (player) => {
+    return new Promise((resolve) => {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      const img = new Image();
+  
+      img.crossOrigin = "anonymous"; // Para evitar problemas de CORS
+      img.src = `${baseURL}/images/medals/${player.idMedalla}.webp`;
+  
+      img.onload = () => {
+        // Ajustar tamaño del canvas según la imagen
+        canvas.width = img.width;
+        canvas.height = img.height;
+  
+        // Dibujar la imagen de la medalla
+        ctx.drawImage(img, 0, 0);
+  
+        // Configurar el texto
+        // Configurar la fuente y posición del texto
+        const fontSize = 24;
+        ctx.font = `bold ${fontSize}px sans-serif`;
+        // ctx.font = "bold 24px sans-serif";
+        // ctx.fillStyle = "white";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+  
+        // Posicionar el texto en el centro
+        const x = canvas.width / 2;
+        // const y = canvas.height - 10; // Un poco arriba del borde inferior
+        // const y = canvas.height - 40; // Un poco arriba del borde inferior
+        const y = canvas.height - fontSize - 20; // Un poco arriba del borde inferior
+
+  
+
+        // ⚡ Sombra suave alrededor del número
+        ctx.shadowColor = "rgba(0, 0, 0, 0.8)"; // Negro con opacidad
+        ctx.shadowBlur = 6;  // Difuminado de la sombra
+        ctx.shadowOffsetX = 2; // Desplazamiento horizontal
+        ctx.shadowOffsetY = 2; // Desplazamiento vertical
+
+        // Relleno del texto (color crema)
+        ctx.fillStyle = "#e8dac0";
+        ctx.fillText(player.medallaTxt, x, y);
+  
+        // Convertir a base64 y resolver la promesa
+        console.log('canvas.toDataURL("image/png")', canvas.toDataURL("image/png"));
+        resolve(canvas.toDataURL("image/png"));
+      };
+    });
+  };
+  
 
   return {
     players,

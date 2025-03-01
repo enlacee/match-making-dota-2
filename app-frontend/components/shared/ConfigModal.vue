@@ -1,4 +1,7 @@
 <script setup>
+import { ref, watch } from 'vue'
+// import { useMedals } from '~/composables/useMedals'
+import { useMedalsStore } from "@/stores/medals";
 
 /**
  * Script for open modal
@@ -15,42 +18,20 @@ defineEmits(['update:modelValue'])
 /**
  * start fn
  */
-import { ref, watch } from 'vue'
-import { useMedals } from '~/composables/useMedals'
+const store = useMedalsStore();
+const { medals } = storeToRefs(store); // 🔥 Medals ahora es reactivo
 
-const { medals, resetMedals, loadMedals, updateMedalMMR } = useMedals()
-
-// Observa cambios en el mmr de cada medalla y guarda solo si cambió
-watch(
-  () => medals.map(medal => ({ ...medal })), // 🔥 Clona para detectar cambios (BUG SINO SE HACE ESTO NO FUNCIONA DETECTAR EL CAMBIO)
-  (newMedals, oldMedals) => {
-    console.log("newMedals,", newMedals , "oldMedals ", oldMedals);
-
-    newMedals.forEach((medal, index) => {
-      if (!oldMedals || medal.mmr !== oldMedals[index]?.mmr) {
-        console.log(`Actualizando MMR de ${medal.name}: ${oldMedals?.[index]?.mmr} → ${medal.mmr}`);
-        updateMedalMMR(index, medal.mmr);
-      } else {
-        console.log(`No se actualiza ${medal.name}, sigue en ${medal.mmr}`);
-      }
-    });
-  },
-  { deep: true }
-);
-
-const resetValues = () => {
+// Ahora puedes llamar las funciones del store directamente:
+const reset = () => {
   if (confirm("¿Estás seguro de resetear los valores?")) {
-    resetMedals(); // Llama la función que resetea en el store
-    loadMedals(); // reload data from localstorage and set the (this.medals)
-
-    // console.log('medals', medals)
-    // console.log('useMedals().medals', useMedals().medals);
-    Object.assign(medals, useMedals().medals); // 🔥 Forzar reactividad
-
-    location.reload(); // 🔄 Recarga la página para reflejar los cambios
+    store.resetMedals();
   }
 };
+const updateMMR = (index, newMMR) => store.updateMedalMMR(index, newMMR);
 
+// const { medals, resetMedals, loadMedals, updateMedalMMR } = useMedals()
+
+console.log('reactivoooooo....', medals.value)
 </script>
 
 <template>
@@ -97,11 +78,24 @@ const resetValues = () => {
                   <td class="px-2">{{ medal.name }}</td>
                   <td class="px-2">
                     <code class="text-xs">MMR >= </code> 
+
+                    <!-- v-model: solo guarda en memoria -->
+                    <!--
                     <input 
                       type="number" 
                       v-model="medal.mmr" 
                       class="w-20 p-1 border rounded text-center bg-white dark:bg-gray-700"
                     />
+                    -->
+
+                    <!-- guardar en localstorage si hay cambios -->
+                    <input 
+                      type="number" 
+                      :value="medal.mmr"
+                      @input="updateMMR(index, $event.target.value)" 
+                      class="w-20 p-1 border rounded text-center bg-white dark:bg-gray-700"
+                    />
+
                   </td>
                 </tr>
               </tbody>
@@ -109,15 +103,12 @@ const resetValues = () => {
 
             <div class="text-center p-4">
                 <button 
-                  @click="resetValues"
+                  @click="reset"
                   class="px-4 py-2 bg-red-600 text-white rounded text-sm"
                 >
                   Resetear Valores por Defecto
                 </button>
               </div>
-
-
-
           </div>
         </div>
 
