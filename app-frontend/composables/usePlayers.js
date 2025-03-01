@@ -155,7 +155,7 @@ export const usePlayers = () => {
   
         // Configurar el texto
         // Configurar la fuente y posición del texto
-        const fontSize = 24;
+        const fontSize = 30;
         ctx.font = `bold ${fontSize}px sans-serif`;
         // ctx.font = "bold 24px sans-serif";
         // ctx.fillStyle = "white";
@@ -166,7 +166,7 @@ export const usePlayers = () => {
         const x = canvas.width / 2;
         // const y = canvas.height - 10; // Un poco arriba del borde inferior
         // const y = canvas.height - 40; // Un poco arriba del borde inferior
-        const y = canvas.height - fontSize - 20; // Un poco arriba del borde inferior
+        const y = canvas.height - fontSize - 12; // Un poco arriba del borde inferior
 
   
 
