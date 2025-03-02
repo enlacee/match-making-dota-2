@@ -176,8 +176,8 @@ watch(() => props.modelValue, (newVal) => {
                 <div class="bg-[#0F172A] text-[#9B9FA0] dark:text-white font-bold flex justify-between text-sm p-8" id="capture">
                     <!-- Team 1: A -->
                     <div class="p-2 w-[48%]">
-                        <h3 class="text-lg mb-2">Team Radiant</h3>
-                        <!-- <br> -->
+                        <h3 class="text-lg">Team Radiant</h3>
+                        <br>
                         <ul class="space-y-2 border-4 border-dashed border-[#A4ADBC] rounded-lg p-2 mb-1">
                             <li v-for="(player, index) in groupA" :key="index" class="border border-[#495164] p-1 rounded-md flex items-center justify-between">
                                 <img :src="player.medallaImg || `${baseURL}/images/medals/${player.idMedalla}.webp`" class="w-10 h-10">
@@ -193,7 +193,7 @@ watch(() => props.modelValue, (newVal) => {
 
                         <!-- Diferencia de MMR -->
                         <div v-if="sumA > sumB" class="mt-0">
-                            <p class="flex items-center justify-between text-right py-1">Difference 
+                            <p class="flex items-center justify-between text-right py-1">Diferencia 
                                 <span class="bg-[#1E293B] py-1 px-2 w-32">+{{ Math.abs(sumA - sumB) }} MMR</span>
                             </p>
                         </div>
@@ -201,8 +201,8 @@ watch(() => props.modelValue, (newVal) => {
 
                     <!-- Team 2: B-->
                     <div class="p-2 w-[48%]">
-                        <h3 class="text-lg mb-2">Team Dire</h3>
-                        <!-- <br> -->
+                        <h3 class="text-lg">Team Dire</h3>
+                        <br>
                         <ul class="space-y-2 border-4 border-dashed border-[#A4ADBC] rounded-lg p-2 mb-1">
                             <li v-for="(player, index) in groupB" :key="index" class="border border-[#495164] p-1 rounded-md flex items-center justify-between">
                                 <img :src="player.medallaImg || `${baseURL}/images/medals/${player.idMedalla}.webp`" class="w-10 h-10">
@@ -210,7 +210,9 @@ watch(() => props.modelValue, (newVal) => {
                             </li>
                         </ul>
                         <div class="mt-0">
-                            <p class="flex items-center justify-between text-right py-2">Total <span class="bg-[#1E293B] py-1 px-2 w-32">{{ sumB }}</span></p>
+                            <p class="flex items-center justify-between text-right py-1 h-full">Total 
+                              <span class="bg-[#1E293B] py-1 px-2 w-32">{{ sumB }}</span>
+                            </p>
                         </div>
 
                         <!-- Diferencia de MMR -->
@@ -224,14 +226,14 @@ watch(() => props.modelValue, (newVal) => {
 
                 <!-- Contenedor de botones centrado con espacio entre ellos -->
                 <div class="mt-4 flex items-center justify-center space-x-4">
-                    <!-- <button
+                    <button
                         @click="capture"
                         type="button" 
                         id="saveImage"
                         class="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 
                             text-white font-bold py-2 px-6 rounded-lg shadow-md transition-all duration-300 ">
                         📷 Guardar Imagen
-                    </button> -->
+                    </button>
 
                     <button @click="$emit('update:modelValue', false)"
                         type="button" 
